@@ -1,0 +1,82 @@
+/*重置样式*/
+body,div,p,ul,ol,dl,dt,dd,li,form,input,table,th,td,img,h1,h2,h3,h4,h5,h6 { margin:0 ;padding:0; }
+body { background:#e8dccd ; color:#000; font-size:12px; font-style:normal; font-family:"Microsoft Yahei";}
+em, b, i { font-style:normal;}
+img { border:none;}
+a { text-decoration:none; color:#000;}
+a:hover { text-decoration:underline; color:#f50;}
+li { list-style:none;}
+table { border-spacing:0; border-collapse:collapse;}
+/*the end*/
+
+/*公共*/
+.hide {display: none;}
+.flt {float:left;}
+.frt {float:right;}
+.clear { clear: both;}
+/*清除浮动*/
+.clearfix { *zoom: 1;} 
+.clearfix:before, .clearfix:after { display: table; line-height: 0; content: "";}
+.clearfix:after { clear: both;}
+
+
+/* contain */
+.contain{
+    width: 800px;
+    height: 600px;
+    background-color: #fff;
+    margin: 0 auto;
+}
+
+.contain>div{
+    width: 800px;
+    height: 600px;
+    overflow: hidden;
+}
+/* main */
+.main>h1{
+    width: 800px;
+    height: 60px;
+    font-size: 60px;
+    text-align: center;
+    line-height: 60px;
+    margin-top: 30px;
+}
+.main>button{
+    display: block;
+    margin: 70px auto;
+    width: 300px;
+    height: 80px;
+    font-size: 30px;
+    text-align: center;
+    line-height: 80px;
+    border-radius: 20px;
+    color: #424242;
+    background: #eee;
+}
+
+/* game */
+.game .gamebox{
+    margin: 70px auto;
+    border: 1px solid #444
+}
+.game .gamebox li{
+    width: 20px;
+    height: 20px;
+    float: left;
+    border: 1px solid #eee;
+    box-sizing: border-box;
+    color: #f50;
+    line-height: 18px;
+    font-size: 16px;
+    text-align: center
+}
+.game .gamebox .mine{
+    background-color: #F00;
+}
+.game .gamebox .warning{
+    background-color: #08c;
+}
+
+
+
