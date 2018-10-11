@@ -1,11 +1,22 @@
+function hasClass(obj, cls){
+    var obj_class = obj.className;//获取 class 内容.
+    var obj_class_lst = obj_class.split(/\s+/);//通过split空字符将cls转换成数组.
+    var x = 0;
+    for(x in obj_class_lst) {
+        if(obj_class_lst[x] == cls) {//循环数组, 判断是否包含cls
+            return true;
+        }
+    }
+    return false
+}
 //封装布阵方法
 (function(){
     function Draw(){
-        var gameBox = document.createElement('div');
+        var gameBox = document.createElement('div'); //新建div标签
         gameBox.className = 'gamebox'; //设置一个gamebox,里面放若干小格子
-        gameBox.style.width = mineList[difficulty][0] * 20 + 'px';
+        gameBox.style.width = mineList[difficulty][0] * 20 + 'px'; //设置div宽高
         gameBox.style.height = mineList[difficulty][1] * 20 + 'px';
-        for (let i = 0; i < mineList[difficulty][2]; i++) {
+        for (let i = 0; i < mineList[difficulty][2]; i++) { //里面放li标签
             var list = document.createElement('li');
             gameBox.appendChild(list)
         }
@@ -19,14 +30,11 @@
         var num = mineList[difficulty][3];
         for (; num; ) { //随机出固定个数的雷
             var mine = parseInt(Math.random()*mineList[difficulty][2])
-            if (mineArr.indexOf(mine) == -1) {
+            if (mineArr.indexOf(mine) == -1) { //防止两个雷的位置相同
                 mineArr.push(mine);
-                num--
+                list[mine].setAttribute('isMine','yes');
+                num--;
             }
-        }
-        for (let i = 0; i < mineArr.length; i++) { //把随机的雷安放在地图里
-            list[mineArr[i]].setAttribute('isMine','yes');
-            // list[mineArr[i]].classList.add('mine');
         }
     }
     window.Mine = Mine
@@ -64,47 +72,47 @@
             }
 
             
-            if (mineArr[i] == 0) { //左上角
+            if (mineArr[i] == 0) { //雷的位置在地图左上角
                 Right();
                 Bottom();
                 rightbottom();
-            } else if (mineArr[i] == (mineList[difficulty][0]-1)){ //右上角
+            } else if (mineArr[i] == (mineList[difficulty][0]-1)){ //雷的位置在地图右上角
                 Left();
                 Bottom();
                 leftbottom();
-            }else if (mineArr[i] == (mineList[difficulty][2] - mineList[difficulty][0])){ //左下角
+            }else if (mineArr[i] == (mineList[difficulty][2] - mineList[difficulty][0])){ //雷的位置在地图左下角
                 Top();
                 Right();
                 righttop();
-            }else if (mineArr[i] == (mineList[difficulty][2] - 1)){ //右下角
+            }else if (mineArr[i] == (mineList[difficulty][2] - 1)){ //雷的位置在地图右下角
                 Top();
                 Left();
                 lefttop();
-            }else if (mineArr[i] < (mineList[difficulty][0])){ //上边
+            }else if (mineArr[i] < (mineList[difficulty][0])){ //雷的位置在地图上边
                 Left();
                 Right();
                 Bottom();
                 leftbottom();
                 rightbottom();
-            }else if (mineArr[i] > (mineList[difficulty][2] - mineList[difficulty][0])){ //下边
+            }else if (mineArr[i] > (mineList[difficulty][2] - mineList[difficulty][0])){ //雷的位置在地图下边
                 Left();
                 Right();
                 Top();
                 righttop();
                 lefttop();
-            }else if (mineArr[i] % mineList[difficulty][0] == 0){ //左边
+            }else if (mineArr[i] % mineList[difficulty][0] == 0){ //雷的位置在地图左边
                 Top();
                 Bottom();
                 Right();
                 righttop();
                 rightbottom();
-            }else if (mineArr[i] % mineList[difficulty][0] == mineList[difficulty][0]-1){ //右边
+            }else if (mineArr[i] % mineList[difficulty][0] == mineList[difficulty][0]-1){ //雷的位置在地图右边
                 Top();
                 Bottom();
                 Left();
                 lefttop();
                 leftbottom();
-            }else { //中间
+            }else { //雷的位置在地图中间
                 Top();
                 Bottom();
                 Left();
@@ -229,53 +237,55 @@
 (function(){
     function Binding(){
         for (let i = 0; i < list.length; i++) {
-            (function(){
-                list[i].addEventListener('click', function(){
-                    if (this.getAttribute('isMine')) {
-                        for (let i = 0; i < mineArr.length; i++) {
-                            list[mineArr[i]].classList.add('mine')
-                        }
-                        setTimeout(function(){
-                            alert('BOOM!!')
-                        },1000)
-                    }else if(this.getAttribute('nearby') != 0){
-                        this.innerHTML = this.getAttribute('nearby');
-                        this.setAttribute('safety','yes');
-                        this.classList.add('safety');
-                    }else{
-                        Nomine(i);
-                    }
-                    if (safety.length == mineList[difficulty][2] - mineList[difficulty][3]) {
-                        setTimeout(function(){
-                            alert('YOU ARE WIN!!')
-                        },500)
-                    }
-                    
-                },false)
-            }());
-            (function(){
                 list[i].addEventListener('mousedown', function(e){
-                    if (e.button == 2) {
-                        if (this.className != 'warning') {
-                            this.classList.add('warning')
-                        }else{
-                            this.classList.remove('warning')
+                    if(e.button == 0 && !hasClass(this,'warning')){ //如果点击的是鼠标左键,并且这个格子没有warning
+                        if (this.getAttribute('isMine')) { //如果踩了雷
+                            for (let i = 0; i < mineArr.length; i++) {
+                                list[mineArr[i]].classList.add('mine')
+                            }
+                            setTimeout(function(){
+                                game.classList.add('hide');
+                                result.classList.remove('hide');
+                                lose.classList.remove('hide');
+                            },500)
+                        }else if(this.getAttribute('nearby') != 0){ //如果附近有雷
+                            this.innerHTML = this.getAttribute('nearby');
+                            this.setAttribute('safety','yes');
+                            this.classList.add('safety');
+                        }else{ //如果附近没有雷
+                            Nomine(i);
                         }
-                        
+                        if (safety.length == mineList[difficulty][2] - mineList[difficulty][3]) { //判断是否胜利
+                            setTimeout(function(){
+                                game.classList.add('hide');
+                                result.classList.remove('hide');
+                                win.classList.remove('hide');
+                            },500)
+                        }
+                    }else if(e.button == 2){ //如果点击的是右键
+                        if (!list[i].innerHTML) { //如果这个格子还没确定安全
+                            if (this.className != 'warning') { //如果没有插旗
+                                this.classList.add('warning')
+                            }else{
+                                this.classList.remove('warning')
+                            }
+                        }
                     }
                 },false)
-            }())
         }
     }
     window.Binding = Binding
 }())
 
-document.oncontextmenu = function(){
+document.oncontextmenu = function(){ //取消右键默认事件
     return false
 }
 var main = document.getElementsByClassName('main')[0];
 var game = document.getElementsByClassName('game')[0];
 var result = document.getElementsByClassName('result')[0];
+var win = document.getElementsByClassName('win')[0];
+var lose = document.getElementsByClassName('lose')[0];
+var replay = document.getElementsByTagName('button')[3];
 var gameBox = document.getElementsByClassName('gameBox')[0];
 var list = document.getElementsByTagName('li')
 var safety = document.getElementsByClassName('safety')
@@ -286,11 +296,9 @@ var mineList = [
     [25, 20, 500, 40]
 ]
 var mineArr = [];
-
-
 var mainButton = document.getElementsByClassName('mainButton')
+
 for (let i = 0; i < mainButton.length; i++) {
-    (function(){
         mainButton[i].addEventListener('click', function(){
             difficulty = i
             main.classList.add('hide');
@@ -299,8 +307,15 @@ for (let i = 0; i < mainButton.length; i++) {
             Mine();
             nearbyMine();
             Binding();
-        },false)    
-    }())
+        },false)
 }
-
+replay.addEventListener('click', function(){
+    difficulty = null;
+    mineArr = [];
+    main.classList.remove('hide');
+    result.classList.add('hide');
+    win.classList.add('hide');
+    lose.classList.add('hide');
+    game.innerHTML=''; //清空game
+},false)
 
